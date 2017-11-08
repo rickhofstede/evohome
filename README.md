@@ -12,6 +12,10 @@ Honeywell's public APIs to contol Evohome systems.
 
 ### 2. How to use
 
+The [Evohome CLI](https://github.com/rickhofstede/evohome-cli/) is one of the applications that relies on this library. You may use it as an example on how to use the library.
+
+In any case, initialization of the library is trivial:
+
 ```golang
 client = evohome.NewEvohome(username, password)
 if client == nil || !client.Initialized() {
