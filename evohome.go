@@ -147,6 +147,11 @@ func request(requestType string, data io.Reader, path string, pathVars ...interf
     if err != nil {
         return responseBody, err
     }
+    if resp.StatusCode >= 400 {
+        return responseBody, errors.New(
+            fmt.Sprintf("Invalid request; status code '%d' for request to '%s'",
+                resp.StatusCode, fmt.Sprintf(url, pathVars...)))
+    }
 
     // reqDump, _ := httputil.DumpRequest(req, true)
     // fmt.Printf("request: %q\n", reqDump)
