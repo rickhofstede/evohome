@@ -14,6 +14,7 @@ type Zone struct {
     ZoneType string                       `json:"zoneType"`
     TemperatureStatus TemperatureStatus   `json:"temperatureStatus"`
     HeatSetPointStatus HeatSetPointStatus `json:"heatSetpointStatus"`
+    Schedules ZoneSchedule                `json:"dailySchedules"`
 }
 
 type ZoneTemperatureSetting struct {

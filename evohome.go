@@ -17,6 +17,7 @@ var accessToken string
 var refreshToken string
 
 const (
+    scheduleRefreshInterval time.Duration = 5 * time.Second
     temperatureRefreshInterval time.Duration = 2 * time.Second
 )
 
@@ -41,6 +42,7 @@ func NewEvohome(username string, password string) (*Evohome) {
 
     e.installations = installations(e.account.UserId)
     go e.UpdateTemperatures()
+    go e.UpdateSchedules()
     return e
 }
 
@@ -63,6 +65,19 @@ func (e *Evohome) UpdateTemperatures() () {
             }
         }
         time.Sleep(temperatureRefreshInterval)
+    }
+}
+
+// Update zone schedules
+func (e *Evohome) UpdateSchedules() () {
+    zones := e.TemperatureControlSystem().Zones
+
+    for {
+        // Retrieve schedules and merge data structure into Zone object
+        for i, zone := range zones {
+            zones[i].Schedules = zoneSchedules(zone)
+        }
+        time.Sleep(scheduleRefreshInterval)
     }
 }
 
@@ -191,6 +206,22 @@ func installations(userId string) ([]Installation) {
 
     defer body.Close()
     return installations
+}
+
+func zoneSchedules(zone Zone) (ZoneSchedule) {
+    body, err := request("GET", nil, "%s/%s/schedule", "temperatureZone", zone.Id) // FIXME
+    if err != nil {
+        panic(err)
+    }
+
+    var schedule ZoneSchedule
+    err = json.NewDecoder(body).Decode(&schedule)
+    if err != nil {
+        panic(err)
+    }
+
+    defer body.Close()
+    return schedule
 }
 
 func zoneTemperatures(locationId string) ([]Zone) {
