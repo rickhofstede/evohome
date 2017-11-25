@@ -40,3 +40,13 @@ func (t *TemperatureControlSystem) ZoneNamesWithOverride() ([]string) {
 
     return names
 }
+
+// Returns a map of all Zones with Zone names as keys.
+func (t *TemperatureControlSystem) ZonesMap() (map[string]*Zone) {
+    var zones map[string]*Zone
+    zones = make(map[string]*Zone)
+    for i := 0; i < len(t.Zones); i++ {
+        zones[t.Zones[i].Name] = &t.Zones[i]
+    }
+    return zones
+}
